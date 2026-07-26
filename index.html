@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Alphabet Quest — with Hoot & Squibb!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body data-theme="light">
+<div class="wrap">
+
+  <header>
+    <div class="brand">
+      <svg id="mascotSvg" class="bob" viewBox="0 0 100 100"><use href="#owl-face"/></svg>
+      <div>
+        <h1>Alphabet Quest</h1>
+        <div class="tagline">with Hoot the Owl &amp; Squibb the Cat</div>
+      </div>
+    </div>
+    <div class="toolbar">
+      <select id="difficultySelect" class="icon-btn" title="Difficulty">
+        <option value="easy">Easy</option>
+        <option value="medium" selected>Medium</option>
+        <option value="hard">Hard</option>
+      </select>
+      <button class="icon-btn" id="themeToggle">🌙 Dark</button>
+      <button class="icon-btn" id="soundToggle">🔊 Sound</button>
+    </div>
+  </header>
+
+  <div class="scoreboard">
+    <div class="stat-pill">⭐ Score: <span id="scoreVal">0</span></div>
+    <div class="stat-pill">🏆 Best: <span id="bestVal">0</span></div>
+    <div class="stat-pill">🔥 Streak: <span id="streakVal">0</span></div>
+    <div class="stat-pill" id="achvPill">🎖️ Achievements: <span id="achvCount">0</span>/6</div>
+  </div>
+
+  <div class="mascot-row">
+    <div class="mascot-bubble" id="mascotText">Hoot here! Pick a game mode below and let's guess some letters! 🦉</div>
+  </div>
+
+  <div id="menuView">
+    <h2 style="margin-bottom:4px;">Choose your game mode</h2>
+    <div class="mode-grid" id="modeGrid"></div>
+  </div>
+
+  <div id="gameView" class="panel" style="display:none;"></div>
+
+</div>
+
+<div class="achv-toast" id="achvToast">🎖️ <span id="achvToastText"></span></div>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <g id="owl-face">
+      <ellipse cx="50" cy="55" rx="38" ry="34" fill="#8B6DF0"/>
+      <ellipse cx="50" cy="30" rx="18" ry="6" fill="#8B6DF0"/>
+      <path d="M20 32 L34 18 L40 40 Z" fill="#8B6DF0"/>
+      <path d="M80 32 L66 18 L60 40 Z" fill="#8B6DF0"/>
+      <circle cx="36" cy="52" r="14" fill="white"/>
+      <circle cx="64" cy="52" r="14" fill="white"/>
+      <circle class="eye" cx="36" cy="52" r="6" fill="#2B2140"/>
+      <circle class="eye" cx="64" cy="52" r="6" fill="#2B2140"/>
+      <path d="M46 60 L50 68 L54 60 Z" fill="#FFC93D"/>
+      <ellipse cx="50" cy="80" rx="20" ry="10" fill="#FFF7E8" opacity="0.5"/>
+    </g>
+    <g id="cat-face">
+      <ellipse cx="50" cy="58" rx="36" ry="32" fill="#FF6B5B"/>
+      <path d="M18 30 L34 12 L38 38 Z" fill="#FF6B5B"/>
+      <path d="M82 30 L66 12 L62 38 Z" fill="#FF6B5B"/>
+      <ellipse cx="36" cy="55" rx="8" ry="9" fill="#2B2140"/>
+      <ellipse cx="64" cy="55" rx="8" ry="9" fill="#2B2140"/>
+      <path d="M45 66 Q50 72 55 66" stroke="#2B2140" stroke-width="3" fill="none" stroke-linecap="round"/>
+      <line x1="10" y1="60" x2="34" y2="63" stroke="#2B2140" stroke-width="2"/>
+      <line x1="10" y1="70" x2="34" y2="70" stroke="#2B2140" stroke-width="2"/>
+      <line x1="90" y1="60" x2="66" y2="63" stroke="#2B2140" stroke-width="2"/>
+      <line x1="90" y1="70" x2="66" y2="70" stroke="#2B2140" stroke-width="2"/>
+    </g>
+  </defs>
+</svg>
+
+<script type="module" src="js/app.js"></script>
+<footer>
+  <p>Alphabet Quest — an original browser game. Scores reset when you close the tab. Made for learning &amp; fun. 🌈</p>
+</footer>
+</body>
+</html>
