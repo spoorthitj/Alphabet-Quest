@@ -17,6 +17,9 @@
   --shadow: 6px 6px 0 rgba(0,0,0,0.35);
   --grid-line: rgba(255,255,255,0.08);
 }
+[data-theme="dark"] .mode-card,
+[data-theme="dark"] .mode-card h3,
+[data-theme="dark"] .mode-card p { color: #FFFFFF; }
 *{box-sizing:border-box;}
 body{
   margin:0;
@@ -174,6 +177,20 @@ select, input[type=text]{
 }
 
 footer{ text-align:center; opacity:0.55; font-size:0.78rem; margin-top:30px; }
+
+/* ─── User greeting pill ─────────────────────────────────────────────────── */
+.user-greeting{
+  background: linear-gradient(135deg, #8B6DF0, #FF6B5B);
+  color: white;
+  border: 2px solid var(--ink);
+  border-radius: 14px;
+  padding: 8px 14px;
+  font-weight: 800;
+  font-size: 0.85rem;
+  font-family: 'Nunito', sans-serif;
+  box-shadow: 3px 3px 0 rgba(43,33,64,0.18);
+  white-space: nowrap;
+}
 
 @media (max-width:520px){
   .brand h1{ font-size:1.35rem; }
