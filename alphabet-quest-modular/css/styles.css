@@ -158,11 +158,6 @@ header{
 .primary-btn.secondary{ background:var(--teal); }
 .primary-btn.ghost{ background:var(--card); color:var(--ink); }
 
-.timer-bar-outer{
-  height:14px; background:var(--grid-line); border-radius:10px; overflow:hidden; margin:10px 0; border:2px solid var(--ink);
-}
-.timer-bar-inner{ height:100%; background:var(--yellow); transition:width 0.2s linear; }
-
 .achv-toast{
   position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(120%);
   background:var(--purple); color:white; padding:14px 22px; border-radius:16px;
@@ -191,6 +186,18 @@ footer{ text-align:center; opacity:0.55; font-size:0.78rem; margin-top:30px; }
   box-shadow: 3px 3px 0 rgba(43,33,64,0.18);
   white-space: nowrap;
 }
+
+/* ─── Auth gate (shown until a real session check completes) ───────────── */
+.auth-gate{
+  min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:14px; font-weight:800; color:var(--ink);
+}
+.auth-gate-spinner{
+  width:42px; height:42px; border-radius:50%;
+  border:5px solid var(--grid-line); border-top-color:var(--purple);
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin{ to{ transform:rotate(360deg); } }
 
 @media (max-width:520px){
   .brand h1{ font-size:1.35rem; }

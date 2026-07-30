@@ -1,13 +1,15 @@
 import { ALPHABET, EMOJI_MAP, DIFF, ACHV_LIST, MODES } from './constants.js';
 import { createAudioController } from './audio.js';
+import { initializeAuth, loadPersistedGameData, syncGameProgress, signOut } from './auth.js';
+import { readSession, clearSession } from './session.js';
 
 (function(){
   "use strict";
 
   /* ---------- State ---------- */
   const state = {
-    score:0, best:0, streak:0, sound:true, theme:'light', difficulty:'medium',
-    achievements:new Set(), mode:null
+    score:0, best:0, streak:0, highestStreak:0, gamesPlayed:0, sound:true, theme:'light', difficulty:'medium',
+    achievements:new Set(), completedLevels:new Set(), statistics:{}, preferences:{}, coins:0, mode:null
   };
   const audio = createAudioController(state);
 
@@ -55,7 +57,12 @@ import { createAudioController } from './audio.js';
   /* ---------- Score handling ---------- */
   function addScore(points, won){
     state.score += points;
-    if(won){ state.streak++; if(state.streak>=5) unlock('streak5'); }
+    state.gamesPlayed = (state.gamesPlayed||0) + 1;
+    if(won){
+      state.streak++;
+      if(state.streak > (state.highestStreak||0)) state.highestStreak = state.streak;
+      if(state.streak>=5) unlock('streak5');
+    }
     else { state.streak = 0; }
     if(state.score > state.best) state.best = state.score;
     updateScoreboard();
@@ -64,6 +71,7 @@ import { createAudioController } from './audio.js';
     document.getElementById('scoreVal').textContent = state.score;
     document.getElementById('bestVal').textContent = state.best;
     document.getElementById('streakVal').textContent = state.streak;
+    persistGameState();
   }
 
   function backToMenu(){
@@ -71,6 +79,7 @@ import { createAudioController } from './audio.js';
     gameView.style.display = 'none';
     menuView.style.display = 'block';
     setMascot("Nice round! Pick another mode, or try that one again. 🦉", 'idle');
+    persistGameState();
   }
 
   let activeTimers = [];
@@ -86,7 +95,7 @@ import { createAudioController } from './audio.js';
     menuView.style.display = 'none';
     gameView.style.display = 'block';
     state.mode = id;
-    const fns = {classic:modeClassic, timeattack:modeTimeAttack, order:modeOrder, emoji:modeEmoji,
+    const fns = {classic:modeClassic, order:modeOrder, emoji:modeEmoji,
       reverse:modeReverse, scramble:modeScramble, memory:modeMemory, sound:modeSound};
     fns[id]();
   }
@@ -158,75 +167,6 @@ import { createAudioController } from './audio.js';
     }
     render();
     setMascot("Pick a letter to guess. I'll tell you if it's higher or lower! 🦉", 'idle');
-  }
-
-  /* ============ TIME ATTACK ============ */
-  function modeTimeAttack(){
-    const diff = DIFF[state.difficulty];
-    let timeLeft = diff.timeAttackSecs, correctCount = 0, target = randLetter();
-    function randLetter(){ return ALPHABET[Math.floor(Math.random()*26)]; }
-
-    function render(){
-      const pct = Math.max(0, (timeLeft/diff.timeAttackSecs)*100);
-      gameView.innerHTML = panelHeader('⏱️ Time Attack') + `
-        <p>Guess the letter shown as a range hint — as fast as you can!</p>
-        <div class="timer-bar-outer"><div class="timer-bar-inner" style="width:${pct}%"></div></div>
-        <p id="ttLabel" style="font-weight:800;">⏳ ${timeLeft}s &nbsp;|&nbsp; ✅ Correct: ${correctCount}</p>
-        <div class="hint-item" id="ttHint">Comes after ${prevLetter(target,3)} and before ${nextLetter(target,3)}</div>
-        <div class="letter-grid" id="letterGrid"></div>
-      `;
-      wireBack();
-      const grid = document.getElementById('letterGrid');
-      ALPHABET.forEach(L=>{
-        const b = document.createElement('button');
-        b.className='letter-btn'; b.textContent=L;
-        b.addEventListener('click', ()=>guess(L,b));
-        grid.appendChild(b);
-      });
-    }
-    function prevLetter(L,n){ let i = Math.max(0, ALPHABET.indexOf(L)-n); return ALPHABET[i]; }
-    function nextLetter(L,n){ let i = Math.min(25, ALPHABET.indexOf(L)+n); return ALPHABET[i]; }
-
-    function guess(L, btn){
-      if(L === target){
-        correctCount++;
-        addScore(5, true);
-        audio.beep('correct');
-        setMascot("Yes! Keep going! ⚡", 'happy');
-      } else {
-        audio.beep('wrong');
-        setMascot("Nope, try the next one!", 'sad');
-      }
-      target = randLetter();
-      render();
-    }
-    render();
-    const timer = setInterval(()=>{
-      timeLeft--;
-      if(timeLeft<=0){
-        clearInterval(timer);
-        endRound();
-        return;
-      }
-      const bar = document.querySelector('.timer-bar-inner');
-      if(bar) bar.style.width = Math.max(0,(timeLeft/diff.timeAttackSecs)*100) + '%';
-      const label = document.getElementById('ttLabel');
-      if(label) label.textContent = `⏳ ${timeLeft}s  |  ✅ Correct: ${correctCount}`;
-    },1000);
-    activeTimers.push(timer);
-
-    function endRound(){
-      if(correctCount>=10) unlock('speedy');
-      setMascot(`Time's up! You got ${correctCount} correct. Score added! ⏱️`, correctCount>0?'happy':'sad');
-      gameView.innerHTML = panelHeader('⏱️ Time Attack — Results') + `
-        <div class="big-emoji">${correctCount>=10?'🏆':'⌛'}</div>
-        <p style="text-align:center;font-weight:800;font-size:1.2rem;">You guessed ${correctCount} letters correctly!</p>
-        <div style="text-align:center;"><button class="primary-btn" id="again">Play again</button></div>
-      `;
-      wireBack();
-      document.getElementById('again').addEventListener('click', modeTimeAttack);
-    }
-    setMascot("Quick! Guess letters as fast as you can before time runs out!", 'idle');
   }
 
   /* ============ ALPHABET ORDER ============ */
@@ -389,10 +329,21 @@ import { createAudioController } from './audio.js';
   }
 
   /* ============ MEMORY MODE ============ */
+  // Picks `len` unique letters from the alphabet in a random order (Fisher–Yates
+  // style draw-without-replacement), so the sequence is never alphabetical.
+  function randomLetterSequence(len){
+    const pool = [...ALPHABET];
+    const seq = [];
+    for(let i=0;i<len;i++){
+      const idx = Math.floor(Math.random()*pool.length);
+      seq.push(pool.splice(idx,1)[0]);
+    }
+    return seq;
+  }
+
   function modeMemory(){
     const diff = DIFF[state.difficulty];
-    const startIdx = Math.floor(Math.random()*(26-diff.memoryLen));
-    const sequence = ALPHABET.slice(startIdx, startIdx+diff.memoryLen);
+    const sequence = randomLetterSequence(diff.memoryLen);
     let typed = [];
 
     gameView.innerHTML = panelHeader('🧠 Memory Mode') + `
@@ -487,20 +438,80 @@ import { createAudioController } from './audio.js';
     }
   }
 
+  async function persistGameState(){
+    try {
+      await syncGameProgress(state);
+    } catch (error) {
+      console.warn('Could not persist game progress:', error);
+    }
+  }
+
+  function updateGreeting(userName){
+    const el = document.getElementById('userGreeting');
+    if (el) el.textContent = userName ? `👋 Hi, ${userName}!` : '';
+  }
+
+  async function restoreSession(){
+    // Note: we deliberately do NOT read the local session cache or show
+    // any greeting/dashboard content here. Nothing about "who's logged
+    // in" is trusted until initializeAuth() has confirmed a real,
+    // server-validated Supabase session (see onSessionReady below).
+    const authState = await initializeAuth({
+      onSessionReady: async (user) => {
+        const session = readSession();
+        updateGreeting(session?.name || user?.email?.split('@')[0] || 'Adventurer');
+        await loadPersistedGameData(state);
+        renderMenu();
+        updateScoreboard();
+        applySavedPreferences();
+        revealDashboard();
+      },
+      onError: () => {
+        window.location.replace('login.html');
+      }
+    });
+
+    if (!authState.ready) {
+      window.location.replace('login.html');
+      return;
+    }
+  }
+
+  function revealDashboard(){
+    const gate = document.getElementById('authGate');
+    const root = document.getElementById('appRoot');
+    if (gate) gate.style.display = 'none';
+    if (root) root.hidden = false;
+  }
+
+  function applySavedPreferences(){
+    document.body.setAttribute('data-theme', state.theme);
+    document.getElementById('themeToggle').textContent = state.theme === 'light' ? '🌙 Dark' : '☀️ Light';
+    document.getElementById('soundToggle').textContent = state.sound ? '🔊 Sound' : '🔇 Muted';
+    document.getElementById('difficultySelect').value = state.difficulty;
+  }
+
   /* ---------- Top controls ---------- */
   document.getElementById('themeToggle').addEventListener('click', ()=>{
     state.theme = state.theme==='light' ? 'dark' : 'light';
     document.body.setAttribute('data-theme', state.theme);
     document.getElementById('themeToggle').textContent = state.theme==='light' ? '🌙 Dark' : '☀️ Light';
+    persistGameState();
   });
   document.getElementById('soundToggle').addEventListener('click', (e)=>{
     state.sound = !state.sound;
     e.target.textContent = state.sound ? '🔊 Sound' : '🔇 Muted';
+    persistGameState();
   });
   document.getElementById('difficultySelect').addEventListener('change', (e)=>{
     state.difficulty = e.target.value;
+    persistGameState();
   });
 
-  renderMenu();
-  updateScoreboard();
+  document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+    await signOut({ onComplete: () => { clearSession(); window.location.replace('login.html'); } });
+  });
+
+  restoreSession();
 })();
+
