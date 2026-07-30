@@ -109,7 +109,7 @@ window.handleLogin = async function handleLogin(e) {
     onSuccess: (sessionUser) => {
       const profileName = sessionUser.email?.split('@')[0] || 'Adventurer';
       writeSession(sessionUser, { username: profileName });
-      showWelcomeFlash(profileName, () => window.location.replace('index.html'));
+      showWelcomeFlash(profileName, () => window.location.replace('dashboard.html'));
     },
     onError: (message) => showError('loginError', message)
   });
@@ -138,7 +138,7 @@ window.handleRegister = async function handleRegister(e) {
   const user = await signUpWithEmail(email, password, username, {
     onSuccess: (sessionUser) => {
       writeSession(sessionUser, { username });
-      showWelcomeFlash(username, () => window.location.replace('index.html'));
+      showWelcomeFlash(username, () => window.location.replace('dashboard.html'));
     },
     onError: (message) => showError('regError', message)
   });
@@ -176,7 +176,7 @@ if (document.readyState === 'loading') {
     onSessionReady: (user) => {
       const username = currentSession?.name || user?.email?.split('@')[0] || 'Adventurer';
       writeSession(user, { username });
-      showWelcomeFlash(username, () => window.location.replace('index.html'));
+      showWelcomeFlash(username, () => window.location.replace('dashboard.html'));
     },
     onError: () => {}
   });

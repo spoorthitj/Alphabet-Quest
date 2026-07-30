@@ -467,12 +467,12 @@ import { readSession, clearSession } from './session.js';
         revealDashboard();
       },
       onError: () => {
-        window.location.replace('login.html');
+        window.location.replace('index.html');
       }
     });
 
     if (!authState.ready) {
-      window.location.replace('login.html');
+      window.location.replace('index.html');
       return;
     }
   }
@@ -509,7 +509,7 @@ import { readSession, clearSession } from './session.js';
   });
 
   document.getElementById('logoutBtn').addEventListener('click', async ()=>{
-    await signOut({ onComplete: () => { clearSession(); window.location.replace('login.html'); } });
+    await signOut({ onComplete: () => { clearSession(); window.location.replace('index.html'); } });
   });
 
   restoreSession();

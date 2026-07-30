@@ -4,12 +4,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Alphabet Quest — with Hoot & Squibb!</title>
+  <title>Alphabet Quest — Welcome!</title>
+  <meta name="description" content="Join Hoot the Owl and Squibb the Cat on an alphabet adventure! Login or register to start playing.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link
-    href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@500;700;800&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css">
+  <link rel="stylesheet" href="css/login.css">
   <script type="importmap">
     {
       "imports": {
@@ -19,101 +17,202 @@
   </script>
 </head>
 
-<body data-theme="light">
-  <!--
-    Auth gate: shown by default, and stays visible until app.js has
-    actually confirmed a valid Supabase session (see restoreSession()
-    in js/app.js). The real dashboard markup below starts hidden so
-    nothing - not the menu, not the score, not the greeting - can ever
-    be seen before authentication is verified.
-  -->
-  <div id="authGate" class="auth-gate">
-    <div class="auth-gate-spinner" aria-hidden="true"></div>
-    <p>Checking your session…</p>
+<body>
+  <!-- Floating bubbles background -->
+  <div class="bubbles" aria-hidden="true">
+    <span class="bubble">🌟</span>
+    <span class="bubble">⭐</span>
+    <span class="bubble">🎈</span>
+    <span class="bubble">🌈</span>
+    <span class="bubble">✨</span>
+    <span class="bubble">🎉</span>
+    <span class="bubble">🦋</span>
+    <span class="bubble">🌸</span>
+    <span class="bubble">🍀</span>
+    <span class="bubble">🎀</span>
   </div>
 
-  <div class="wrap" id="appRoot" hidden>
+  <div class="login-wrap">
 
-    <header>
-      <div class="brand">
-        <svg id="mascotSvg" class="bob" viewBox="0 0 100 100">
-          <use href="#owl-face" />
+    <!-- Header -->
+    <div class="login-header">
+      <h1 class="logo-text">Alphabet Quest</h1>
+      <p class="logo-sub">The Magical Learning Adventure!</p>
+    </div>
+
+    <!-- Mascot Stage -->
+    <div class="mascot-stage">
+      <!-- Hoot the Owl -->
+      <div class="mascot-char" id="hootChar">
+        <svg class="mascot-svg bounce-anim" viewBox="0 0 100 120" aria-label="Hoot the Owl">
+          <!-- Body -->
+          <ellipse cx="50" cy="80" rx="36" ry="32" fill="#8B6DF0"/>
+          <!-- Wings -->
+          <ellipse cx="16" cy="82" rx="14" ry="10" fill="#7B5CE0" transform="rotate(-20 16 82)"/>
+          <ellipse cx="84" cy="82" rx="14" ry="10" fill="#7B5CE0" transform="rotate(20 84 82)"/>
+          <!-- Head -->
+          <ellipse cx="50" cy="44" rx="26" ry="24" fill="#8B6DF0"/>
+          <!-- Ears -->
+          <polygon points="28,25 22,8 36,22" fill="#7B5CE0"/>
+          <polygon points="72,25 78,8 64,22" fill="#7B5CE0"/>
+          <!-- Ear tufts -->
+          <polygon points="29,22 24,10 34,20" fill="#FFC93D"/>
+          <polygon points="71,22 76,10 66,20" fill="#FFC93D"/>
+          <!-- Eye whites -->
+          <circle cx="37" cy="44" r="12" fill="white"/>
+          <circle cx="63" cy="44" r="12" fill="white"/>
+          <!-- Eyes -->
+          <circle class="eye-pupil" cx="37" cy="44" r="6" fill="#2B2140"/>
+          <circle class="eye-pupil" cx="63" cy="44" r="6" fill="#2B2140"/>
+          <!-- Eye shine -->
+          <circle cx="39" cy="41" r="2" fill="white"/>
+          <circle cx="65" cy="41" r="2" fill="white"/>
+          <!-- Beak -->
+          <polygon points="46,52 54,52 50,60" fill="#FFC93D"/>
+          <!-- Belly -->
+          <ellipse cx="50" cy="88" rx="22" ry="18" fill="#C8B4F8" opacity="0.6"/>
+          <!-- Feet -->
+          <ellipse cx="38" cy="110" rx="8" ry="4" fill="#FFC93D"/>
+          <ellipse cx="62" cy="110" rx="8" ry="4" fill="#FFC93D"/>
         </svg>
-        <div>
-          <h1>Alphabet Quest</h1>
-          <div class="tagline">with Hoot the Owl &amp; Squibb the Cat</div>
+        <div class="char-name">Hoot 🦉</div>
+      </div>
+
+      <!-- Speech bubble -->
+      <div class="speech-bubble" id="speechBubble">
+        <span id="bubbleText">Hey there! Ready to go on an alphabet adventure? 🌟</span>
+      </div>
+
+      <!-- Squibb the Cat -->
+      <div class="mascot-char" id="squibbChar">
+        <svg class="mascot-svg bounce-anim-delay" viewBox="0 0 100 120" aria-label="Squibb the Cat">
+          <!-- Body -->
+          <ellipse cx="50" cy="82" rx="34" ry="30" fill="#FF6B5B"/>
+          <!-- Tail -->
+          <path d="M82 95 Q105 80 100 60 Q95 40 85 55" stroke="#FF4A38" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <!-- Head -->
+          <ellipse cx="50" cy="44" rx="28" ry="25" fill="#FF6B5B"/>
+          <!-- Ears -->
+          <polygon points="25,26 18,5 38,22" fill="#FF6B5B"/>
+          <polygon points="75,26 82,5 62,22" fill="#FF6B5B"/>
+          <polygon points="27,23 22,9 36,21" fill="#FFB3AD"/>
+          <polygon points="73,23 78,9 64,21" fill="#FFB3AD"/>
+          <!-- Eyes -->
+          <ellipse cx="37" cy="43" r="9" fill="#2B2140"/>
+          <ellipse cx="63" cy="43" r="9" fill="#2B2140"/>
+          <!-- Eye shine -->
+          <circle cx="39" cy="40" r="2.5" fill="white"/>
+          <circle cx="65" cy="40" r="2.5" fill="white"/>
+          <!-- Nose -->
+          <ellipse cx="50" cy="53" rx="4" ry="3" fill="#FF4A38"/>
+          <!-- Smile -->
+          <path d="M43 58 Q50 65 57 58" stroke="#2B2140" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <!-- Whiskers -->
+          <line x1="8" y1="52" x2="38" y2="56" stroke="#2B2140" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="8" y1="58" x2="38" y2="58" stroke="#2B2140" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="62" y1="56" x2="92" y2="52" stroke="#2B2140" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="62" y1="58" x2="92" y2="58" stroke="#2B2140" stroke-width="1.5" stroke-linecap="round"/>
+          <!-- Belly -->
+          <ellipse cx="50" cy="88" rx="20" ry="16" fill="#FFB3AD" opacity="0.7"/>
+          <!-- Paws -->
+          <ellipse cx="36" cy="108" rx="9" ry="5" fill="#FF4A38"/>
+          <ellipse cx="64" cy="108" rx="9" ry="5" fill="#FF4A38"/>
+        </svg>
+        <div class="char-name">Squibb 🐱</div>
+      </div>
+    </div>
+
+    <!-- Auth Card -->
+    <div class="auth-card" id="authCard">
+
+      <!-- Tab switcher -->
+      <div class="auth-tabs" role="tablist">
+        <button class="tab-btn active" id="loginTab" role="tab" aria-selected="true" aria-controls="loginPanel" onclick="switchTab('login')">
+          🔓 Login
+        </button>
+        <button class="tab-btn" id="registerTab" role="tab" aria-selected="false" aria-controls="registerPanel" onclick="switchTab('register')">
+          🌟 Register
+        </button>
+      </div>
+
+      <!-- LOGIN PANEL -->
+      <div class="tab-panel active" id="loginPanel" role="tabpanel">
+        <p class="panel-hint">Welcome back, adventurer! 🎒</p>
+        <div class="form-group">
+          <label for="loginEmail">Email Address</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email" maxlength="80">
+          </div>
         </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="loginPassword" placeholder="Your password" autocomplete="current-password" maxlength="80">
+          </div>
+        </div>
+        <div class="error-msg" id="loginError" role="alert" aria-live="polite"></div>
+        <button class="auth-btn" id="loginBtn" onclick="handleLogin()">
+          <span class="btn-emoji">🚀</span> Let's Play!
+        </button>
+        <p class="switch-hint">New here? <a href="#" onclick="switchTab('register'); return false;">Create an account →</a></p>
       </div>
-      <div class="toolbar">
-        <span class="user-greeting" id="userGreeting"></span>
-        <select id="difficultySelect" class="icon-btn" title="Difficulty">
-          <option value="easy">Easy</option>
-          <option value="medium" selected>Medium</option>
-          <option value="hard">Hard</option>
-        </select>
-        <button class="icon-btn" id="themeToggle">🌙 Dark</button>
-        <button class="icon-btn" id="soundToggle">🔊 Sound</button>
-        <button class="icon-btn" id="logoutBtn" title="Logout">🚪 Logout</button>
-      </div>
-    </header>
 
-    <div class="scoreboard">
-      <div class="stat-pill">⭐ Score: <span id="scoreVal">0</span></div>
-      <div class="stat-pill">🏆 Best: <span id="bestVal">0</span></div>
-      <div class="stat-pill">🔥 Streak: <span id="streakVal">0</span></div>
-      <div class="stat-pill" id="achvPill">🎖️ Achievements: <span id="achvCount">0</span></div>
+      <!-- REGISTER PANEL -->
+      <div class="tab-panel" id="registerPanel" role="tabpanel">
+        <p class="panel-hint">Join the adventure today! 🌈</p>
+        <div class="form-group">
+          <label for="regName">Username</label>
+          <div class="input-wrap">
+            <span class="input-icon">👤</span>
+            <input type="text" id="regName" placeholder="e.g. Alex" autocomplete="nickname" maxlength="30">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regEmail">Email Address</label>
+          <div class="input-wrap">
+            <span class="input-icon">✉️</span>
+            <input type="email" id="regEmail" placeholder="you@example.com" autocomplete="email" maxlength="80">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password</label>
+          <div class="input-wrap">
+            <span class="input-icon">🔒</span>
+            <input type="password" id="regPassword" placeholder="Choose a strong password" autocomplete="new-password" maxlength="80">
+          </div>
+        </div>
+        <div class="error-msg" id="regError" role="alert" aria-live="polite"></div>
+        <button class="auth-btn" id="registerBtn" onclick="handleRegister()">
+          <span class="btn-emoji">🌟</span> Start Adventure!
+        </button>
+        <p class="switch-hint">Already playing? <a href="#" onclick="switchTab('login'); return false;">Login →</a></p>
+      </div>
+
+    </div><!-- /auth-card -->
+
+    <!-- Alphabet decorations -->
+    <div class="alpha-deco" aria-hidden="true">
+      <span>A</span><span>B</span><span>C</span><span>D</span><span>E</span>
+      <span>F</span><span>G</span><span>H</span><span>I</span><span>J</span>
     </div>
 
-    <div class="mascot-row">
-      <div class="mascot-bubble" id="mascotText">Hoot here! Pick a game mode below and let's guess some letters! 🦉
-      </div>
-    </div>
+  </div><!-- /login-wrap -->
 
-    <div id="menuView">
-      <h2 style="margin-bottom:4px;">Choose your game mode</h2>
-      <div class="mode-grid" id="modeGrid"></div>
-    </div>
-
-    <div id="gameView" class="panel" style="display:none;"></div>
-
-  </div>
-
-  <div class="achv-toast" id="achvToast">🎖️ <span id="achvToastText"></span></div>
-
-  <svg width="0" height="0" style="position:absolute">
+  <!-- Hidden SVG defs (reused) -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
     <defs>
-      <g id="owl-face">
-        <ellipse cx="50" cy="55" rx="38" ry="34" fill="#8B6DF0" />
-        <ellipse cx="50" cy="30" rx="18" ry="6" fill="#8B6DF0" />
-        <path d="M20 32 L34 18 L40 40 Z" fill="#8B6DF0" />
-        <path d="M80 32 L66 18 L60 40 Z" fill="#8B6DF0" />
-        <circle cx="36" cy="52" r="14" fill="white" />
-        <circle cx="64" cy="52" r="14" fill="white" />
-        <circle class="eye" cx="36" cy="52" r="6" fill="#2B2140" />
-        <circle class="eye" cx="64" cy="52" r="6" fill="#2B2140" />
-        <path d="M46 60 L50 68 L54 60 Z" fill="#FFC93D" />
-        <ellipse cx="50" cy="80" rx="20" ry="10" fill="#FFF7E8" opacity="0.5" />
-      </g>
-      <g id="cat-face">
-        <ellipse cx="50" cy="58" rx="36" ry="32" fill="#FF6B5B" />
-        <path d="M18 30 L34 12 L38 38 Z" fill="#FF6B5B" />
-        <path d="M82 30 L66 12 L62 38 Z" fill="#FF6B5B" />
-        <ellipse cx="36" cy="55" rx="8" ry="9" fill="#2B2140" />
-        <ellipse cx="64" cy="55" rx="8" ry="9" fill="#2B2140" />
-        <path d="M45 66 Q50 72 55 66" stroke="#2B2140" stroke-width="3" fill="none" stroke-linecap="round" />
-        <line x1="10" y1="60" x2="34" y2="63" stroke="#2B2140" stroke-width="2" />
-        <line x1="10" y1="70" x2="34" y2="70" stroke="#2B2140" stroke-width="2" />
-        <line x1="90" y1="60" x2="66" y2="63" stroke="#2B2140" stroke-width="2" />
-        <line x1="90" y1="70" x2="66" y2="70" stroke="#2B2140" stroke-width="2" />
-      </g>
+      <filter id="glow">
+        <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+        <feMerge>
+          <feMergeNode in="coloredBlur"/>
+          <feMergeNode in="SourceGraphic"/>
+        </feMerge>
+      </filter>
     </defs>
   </svg>
 
-  <script type="module" src="js/app.js"></script>
-  <footer>
-    <p>Alphabet Quest — an original browser game. Scores reset when you close the tab. Made for learning &amp; fun. 🌈
-    </p>
-  </footer>
+  <script type="module" src="js/login.js"></script>
 </body>
-
 </html>
